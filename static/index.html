@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="module" src="/js/main.js"></script>
+    <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+
+<!-- -------templates------- -->
+<template id="MainPage">
+    <div class="list">
+        <div class="list__item" v-for="(book, i) in books" :key="i" >
+            <a :href="`/#/books?id=${book.id}`">{{ `${book.title}: ${book.authorFullName}` }}</a>
+        </div>
+    </div>
+</template>
+<template id="AuthorsPage">
+    <h1 v-if="one">{{authors[0].fullname}}</h1>
+    <div v-if="one & books.length > 0" class="list">
+        <div class="list__item" v-for="(book, i) in books" :key="i" >
+            <a :href="`/#/books?id=${book.id}`">{{ `${book.title}: ${book.authorFullName}` }}</a>
+        </div>
+    </div>
+    <div v-if="!one & authors.length > 1" class="list">
+        <div class="search">
+            <input>
+            <button>
+                Search
+            </button>
+        </div>
+        <div class="list__item" v-for="(author, i) in authors" :key="i" >
+            <a :href="`/#/authors?id=${author.id}`">{{ `${author.fullname}` }}</a>
+        </div>
+    </div>
+</template>
+<template id="BooksPage">
+    <div class="book" v-if="books.length == 1">
+        <div class="book__title">{{ books[0].title }}</div>
+        <div class="book__author"><a :href="`/#/authors?id=${books[0].authorId}`">{{ books[0].authorFullName }}</a></div>
+    </div>
+    <div v-if="!one && books.length > 1" class="list">
+        <div class="search">
+            <input>
+            <button>
+                Search
+            </button>
+        </div>
+        <div class="list__item" v-for="(book, i) in books" :key="i" >
+            <a :href="`/#/books?id=${book.id}`">{{ `${book.title}: ${book.authorFullName}` }}</a>
+        </div>
+    </div>
+</template>
+<!-- -------templates------- -->
+
+<nav class="list list_row">
+    <div class="list__item ">
+        <a href="/#/">Main</a>
+    </div>
+    <div class="list__item">
+        <a href="/#/books">Books</a>
+    </div>
+    <div class="list__item">
+        <a href="/#/authors">Authors</a>
+    </div>
+</nav>
+<div class="main" v-scope="page()" @vue:mounted="mounted">
+</div>
+
+</body>
+</html>
