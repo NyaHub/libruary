@@ -44,6 +44,23 @@ function setCookie(name, value, options = {}) {
     document.cookie = updatedCookie
 }
 
+function search(e){
+    let s = e.target.value
+    
+    request(`/api/${this.store.page}?search=${s}`).then(d => {
+        if(d.status != 200){
+            console.log(d)
+            return
+        }
+
+        d = JSON.parse(d.responseText)
+        
+        this[this.store.page] = d
+    }).catch(e => {
+        console.log(e)
+    })
+}
+
 function getF(f, params){
     let fs = {
         Authors(){
@@ -74,7 +91,8 @@ function getF(f, params){
                     }).catch(e => {
                         console.log(e)
                     })
-                }
+                },
+                search: search
             }
         },
         Books(){
@@ -103,7 +121,8 @@ function getF(f, params){
                     }).catch(e => {
                         console.log(e)
                     })
-                }
+                },
+                search: search
             }
         },
         Main(){
@@ -133,6 +152,31 @@ function getF(f, params){
     return fs[f]
 }
 
+const store = reactive({
+    page: "page"
+})
+
+function adder(){
+    return{
+        '$template': "#adder",
+        submit(e){
+            let form = new FormData(e.target)
+
+            request(`/api/${this.store.page}`, {
+                method: "POST",
+                headers: {
+                    "Content-type": "application/json"
+                },
+                body: JSON.stringify(Object.fromEntries(form))
+            }).then(d => {
+                console.log(d)
+            }).catch(e => {
+                console.log(e)
+            })
+        }
+    }
+}
+
 let router = {
     routes: {
         "/authors": "Authors",
@@ -148,8 +192,13 @@ let router = {
             }
         }
         let page = getF(route, this.getParams())
+
+        store.page = route.toLowerCase()
+
         createApp({
-            page
+            page,
+            store,
+            adder
         }).mount()
     },
     getParams(){

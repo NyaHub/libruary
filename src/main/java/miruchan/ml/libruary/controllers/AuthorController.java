@@ -26,7 +26,7 @@ public class AuthorController {
     public ResponseEntity addAuthor(@RequestBody Author author){
         try{
             authorRepo.save(author);
-            return ResponseEntity.ok("Saved");
+            return ResponseEntity.ok(author);
         }catch (Exception e) {
             return ResponseEntity.badRequest().body("Error");
         }

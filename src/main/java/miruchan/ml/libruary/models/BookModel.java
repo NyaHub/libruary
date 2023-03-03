@@ -13,8 +13,10 @@ public class BookModel {
     public BookModel(Book b) {
         this.id = b.getId();
         this.title = b.getTitle();
-        this.authorId = b.getAuthor().getId();
-        this.authorFullName = b.getAuthor().getName() + " " + b.getAuthor().getSurname();
+        if(b.getAuthor() != null) {
+            this.authorId = b.getAuthor().getId();
+            this.authorFullName = b.getAuthor().getName() + " " + b.getAuthor().getSurname();
+        }
     }
 
     public static BookModel toModel(Book b){

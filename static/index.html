@@ -17,21 +17,21 @@
     </div>
 </template>
 <template id="AuthorsPage">
-    <h1 v-if="one">{{authors[0].fullname}}</h1>
+    <h1 v-if="one">{{ `${authors[0].fullname} (id: ${authors[0].id})` }}</h1>
     <div v-if="one & books.length > 0" class="list">
         <div class="list__item" v-for="(book, i) in books" :key="i" >
             <a :href="`/#/books?id=${book.id}`">{{ `${book.title}: ${book.authorFullName}` }}</a>
         </div>
     </div>
-    <div v-if="!one & authors.length > 1" class="list">
+    <div v-if="!one" class="list">
         <div class="search">
-            <input>
+            <input @change="search">
             <button>
                 Search
             </button>
         </div>
         <div class="list__item" v-for="(author, i) in authors" :key="i" >
-            <a :href="`/#/authors?id=${author.id}`">{{ `${author.fullname}` }}</a>
+            <a :href="`/#/authors?id=${author.id}`">{{ `${author.fullname} (id: ${author.id})` }}</a>
         </div>
     </div>
 </template>
@@ -40,9 +40,9 @@
         <div class="book__title">{{ books[0].title }}</div>
         <div class="book__author"><a :href="`/#/authors?id=${books[0].authorId}`">{{ books[0].authorFullName }}</a></div>
     </div>
-    <div v-if="!one && books.length > 1" class="list">
+    <div v-if="!one" class="list">
         <div class="search">
-            <input>
+            <input @change="search">
             <button>
                 Search
             </button>
@@ -52,21 +52,48 @@
         </div>
     </div>
 </template>
+<template id="adder">
+    <div class="entity" v-if="store.page == 'authors'">
+        <div>
+            <label for="name">Name</label><input type="text" id="name" name="name">
+        </div>
+        <div>
+            <label for="surname">Surname</label><input type="text" id="surname" name="surname">
+        </div>
+    </div>
+    <div class="entity" v-if="store.page == 'books'">
+        <div>
+            <label for="title">Title</label><input type="text" id="title" name="title">
+        </div>
+        <div>
+            <label for="author_id">Author Id</label><input type="text" id="author_id" name="authorId">
+        </div>
+    </div>
+    <div>
+        <button type="submit">submit</button>
+    </div>
+</template>
 <!-- -------templates------- -->
-
-<nav class="list list_row">
-    <div class="list__item ">
-        <a href="/#/">Main</a>
+<div class="wrapper">
+    <div class="col">
+        <nav class="list list_row">
+            <div class="list__item ">
+                <a href="/#/">Main</a>
+            </div>
+            <div class="list__item">
+                <a href="/#/books">Books</a>
+            </div>
+            <div class="list__item">
+                <a href="/#/authors">Authors</a>
+            </div>
+        </nav>
+        <div class="main" v-scope="page()" @vue:mounted="mounted">
+        </div>
     </div>
-    <div class="list__item">
-        <a href="/#/books">Books</a>
+    <div class="col">
+        <form v-scope="adder()" method="post" :action="`/api/${store.page}`" @submit.prevent="submit" >
+        </form>
     </div>
-    <div class="list__item">
-        <a href="/#/authors">Authors</a>
-    </div>
-</nav>
-<div class="main" v-scope="page()" @vue:mounted="mounted">
 </div>
-
 </body>
 </html>

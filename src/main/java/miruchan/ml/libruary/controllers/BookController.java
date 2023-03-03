@@ -2,7 +2,9 @@ package miruchan.ml.libruary.controllers;
 
 import miruchan.ml.libruary.entities.Author;
 import miruchan.ml.libruary.entities.Book;
+import miruchan.ml.libruary.models.BookForm;
 import miruchan.ml.libruary.models.BookModel;
+import miruchan.ml.libruary.repos.AuthorRepo;
 import miruchan.ml.libruary.repos.BookRepo;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.MetadataSources;
@@ -22,12 +24,20 @@ public class BookController {
 
     @Autowired
     private BookRepo bookRepo;
+    @Autowired
+    private AuthorRepo authorRepo;
 
     @PostMapping
-    public ResponseEntity addBook(@RequestBody Book book){
+    public ResponseEntity addBook(@RequestBody BookForm b){
         try{
+            Book book = new Book();
+            book.setTitle(b.getTitle());
+            Optional<Author> a = authorRepo.findById(b.getAuthorId());
+            if(a.isPresent()){
+                book.setAuthor(a.get());
+            }
             bookRepo.save(book);
-            return ResponseEntity.ok("Saved");
+            return ResponseEntity.ok(new BookModel(book));
         }catch (Exception e) {
             return ResponseEntity.badRequest().body("Error");
         }
